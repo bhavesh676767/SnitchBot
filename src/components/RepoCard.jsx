@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQueue } from '../context/QueueContext';
-import { Trash2, Github, Activity, CheckCircle } from 'lucide-react';
+import { Trash2, FolderGit2, Activity, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const RepoCard = ({ item, readonly }) => {
@@ -10,7 +10,7 @@ const RepoCard = ({ item, readonly }) => {
     switch(item.status) {
       case 'analyzing': return <Activity size={18} className="text-accent animate-pulse" />;
       case 'completed': return <CheckCircle size={18} className="text-success" style={{ color: 'var(--success-color)' }} />;
-      default: return <Github size={18} className="text-secondary" />;
+      default: return <FolderGit2 size={18} className="text-secondary" />;
     }
   };
 
