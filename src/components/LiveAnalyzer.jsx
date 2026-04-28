@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useQueue } from '../context/QueueContext';
-import { ShieldAlert, Activity, CheckCircle, Database } from 'lucide-react';
+import { ShieldAlert, Activity, Zap, TrendingUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const LiveAnalyzer = () => {
@@ -58,16 +58,28 @@ const LiveAnalyzer = () => {
 
   if (!activeRepo) {
     return (
-      <div className="fullscreen-center text-secondary">
-        <ShieldAlert size={64} style={{ opacity: 0.2, marginBottom: '2rem' }} />
-        <h2 style={{ fontSize: '2rem', fontWeight: 300 }}>Awaiting targets...</h2>
-        <p style={{ marginTop: '1rem', opacity: 0.7 }}>Add repositories to the queue to begin real-time analysis.</p>
+      <div className="fullscreen-center" style={{ textAlign: 'center' }}>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4 }}
+        >
+          <ShieldAlert size={64} style={{ opacity: 0.2, marginBottom: '2rem', color: 'var(--text-secondary)' }} />
+          <h2 style={{ fontSize: '1.875rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.75rem' }}>Awaiting targets...</h2>
+          <p style={{ marginTop: '1rem', opacity: 0.7, color: 'var(--text-secondary)', maxWidth: '400px', lineHeight: 1.6 }}>Add repositories to the queue to begin real-time analysis and threat detection.</p>
+        </motion.div>
       </div>
     );
   }
 
+  const getScoreColor = () => {
+    if (currentScore > 80) return 'var(--danger-color)';
+    if (currentScore > 60) return 'var(--warning-color)';
+    return 'var(--success-color)';
+  };
+
   return (
-    <div className="fullscreen-center">
+    <div className="fullscreen-center" style={{ padding: '2rem' }}>
       <AnimatePresence mode="wait">
         <motion.div
           key={activeRepo.id}
@@ -75,69 +87,97 @@ const LiveAnalyzer = () => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 1.1, y: -20 }}
           transition={{ duration: 0.5, type: 'spring' }}
-          style={{ width: '100%', maxWidth: '800px' }}
+          style={{ width: '100%', maxWidth: '900px' }}
         >
-          <div className="card" style={{ padding: '3rem', textAlign: 'center', background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)' }}>
+          <div className="card-elevated" style={{ padding: '2.5rem', textAlign: 'center' }}>
+            {/* Animated Spinner */}
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
               <motion.div 
                 animate={{ rotate: 360 }}
-                transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
+                transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
                 style={{ 
-                  width: '80px', 
-                  height: '80px', 
+                  width: '100px', 
+                  height: '100px', 
                   borderRadius: '50%', 
-                  background: 'conic-gradient(var(--accent-primary) 0%, transparent 70%)',
+                  background: 'conic-gradient(var(--accent-primary) 0%, var(--accent-secondary) 50%, transparent 70%)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  padding: '2px'
+                  padding: '2px',
+                  boxShadow: '0 0 30px rgba(79, 70, 229, 0.2)'
                 }}
               >
                 <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Activity size={32} className="text-accent" />
+                  <Zap size={40} style={{ color: 'var(--accent-primary)' }} />
                 </div>
               </motion.div>
             </div>
 
-            <h1 style={{ fontSize: '3rem', marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>{activeRepo.teamName}</h1>
-            <p className="text-secondary" style={{ fontSize: '1.25rem', marginBottom: '3rem', fontFamily: 'monospace' }}>
+            {/* Repository Info */}
+            <h1 style={{ fontSize: '2.25rem', marginBottom: '0.5rem', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>{activeRepo.teamName}</h1>
+            <p style={{ fontSize: '1rem', marginBottom: '2.5rem', fontFamily: 'monospace', color: 'var(--text-secondary)', wordBreak: 'break-all' }}>
               {activeRepo.repoLink}
             </p>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '3rem', textAlign: 'left' }}>
-              <div style={{ background: 'var(--bg-primary)', padding: '1.5rem', borderRadius: 'var(--radius-lg)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
-                  <Database size={18} />
-                  <span style={{ fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Analysis Progress</span>
+            {/* Analysis Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2.5rem', textAlign: 'left' }}>
+              {/* Progress Section */}
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                style={{ background: 'var(--bg-secondary)', padding: '1.75rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem', color: 'var(--text-secondary)' }}>
+                  <Activity size={18} />
+                  <span style={{ fontSize: '0.8125rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Analysis Progress</span>
                 </div>
-                <div style={{ height: '8px', background: 'var(--border-color)', borderRadius: '4px', overflow: 'hidden' }}>
+                <div style={{ height: '8px', background: 'var(--border-color)', borderRadius: '4px', overflow: 'hidden', marginBottom: '0.75rem' }}>
                   <motion.div 
-                    style={{ height: '100%', background: 'var(--accent-primary)' }}
+                    style={{ height: '100%', background: 'linear-gradient(90deg, var(--accent-primary), var(--accent-secondary))', borderRadius: '4px' }}
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
                     transition={{ ease: "linear", duration: 0.1 }}
                   />
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem', fontSize: '0.875rem' }}>
-                  <span className="text-secondary">Scanning heuristics...</span>
-                  <span style={{ fontWeight: 600 }}>{Math.round(progress)}%</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
+                  <span style={{ color: 'var(--text-secondary)' }}>Scanning heuristics...</span>
+                  <span style={{ fontWeight: 700, color: 'var(--accent-primary)' }}>{Math.round(progress)}%</span>
                 </div>
-              </div>
+              </motion.div>
 
-              <div style={{ background: 'var(--bg-primary)', padding: '1.5rem', borderRadius: 'var(--radius-lg)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
-                  <ShieldAlert size={18} />
-                  <span style={{ fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Threat Score</span>
+              {/* Threat Score Section */}
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+                style={{ background: 'var(--bg-secondary)', padding: '1.75rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem', color: 'var(--text-secondary)' }}>
+                  <TrendingUp size={18} />
+                  <span style={{ fontSize: '0.8125rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Threat Score</span>
                 </div>
-                <div style={{ fontSize: '3rem', fontWeight: 700, color: currentScore > 80 ? 'var(--danger-color)' : currentScore > 60 ? '#f59e0b' : 'var(--success-color)', lineHeight: 1 }}>
-                  {currentScore}<span style={{ fontSize: '1.5rem', color: 'var(--text-secondary)', marginLeft: '4px' }}>/ 100</span>
+                <div style={{ fontSize: '3.5rem', fontWeight: 700, color: getScoreColor(), lineHeight: 1, marginBottom: '0.5rem' }}>
+                  {currentScore}<span style={{ fontSize: '1.25rem', color: 'var(--text-secondary)', marginLeft: '6px' }}>/ 100</span>
                 </div>
-              </div>
+                <p style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)', margin: 0 }}>
+                  {currentScore > 80 ? 'Critical' : currentScore > 60 ? 'High' : 'Moderate'} threat level
+                </p>
+              </motion.div>
             </div>
 
-            <p style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: 'var(--accent-primary)', fontWeight: 500 }} className="animate-pulse">
-              <Activity size={18} /> Running active detection layers...
-            </p>
+            {/* Status Message */}
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', color: 'var(--accent-primary)', fontWeight: 600, margin: 0 }}
+            >
+              <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 2 }}>
+                <Activity size={18} />
+              </motion.div>
+              Running active detection layers...
+            </motion.p>
           </div>
         </motion.div>
       </AnimatePresence>

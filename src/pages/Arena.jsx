@@ -3,13 +3,12 @@ import Preloader from '../components/Preloader';
 import LiveAnalyzer from '../components/LiveAnalyzer';
 import QueueList from '../components/QueueList';
 import { motion } from 'framer-motion';
-import { Activity } from 'lucide-react';
+import { Zap } from 'lucide-react';
 
 const Arena = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate initial loading to establish vibe
     const timer = setTimeout(() => {
       setLoading(false);
     }, 1500);
@@ -22,62 +21,77 @@ const Arena = () => {
 
   return (
     <div className="arena-layout">
-      {/* Top Header */}
-      <header style={{ 
-        padding: '1.5rem 2rem', 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center',
-        background: 'rgba(255, 255, 255, 0.5)',
-        backdropFilter: 'blur(10px)',
-        borderBottom: '1px solid var(--border-color)'
-      }}>
+      {/* Arena Header */}
+      <motion.div 
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        style={{ 
+          padding: '1.5rem 2rem', 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          background: 'var(--bg-card)',
+          borderBottom: '1px solid var(--border-color)',
+          marginTop: '0'
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{ background: 'var(--accent-primary)', padding: '0.5rem', borderRadius: 'var(--radius-md)' }}>
-            <Activity color="white" size={24} />
+          <div style={{ background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))', padding: '0.5rem', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Zap color="white" size={20} />
           </div>
           <div>
-            <h1 style={{ fontSize: '1.25rem', margin: 0, letterSpacing: '-0.02em' }}>SNITCHBOT</h1>
+            <h2 style={{ fontSize: '1.125rem', margin: 0, letterSpacing: '-0.02em', fontWeight: 700 }}>Live Analysis</h2>
             <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em', margin: 0 }}>
-              Live Heuristic Detection
+              Real-time Heuristic Detection
             </p>
           </div>
         </div>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div className="flex items-center gap-2 text-success" style={{ color: 'var(--success-color)' }}>
-            <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'currentColor' }} className="animate-pulse" />
-            <span style={{ fontSize: '0.875rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em' }}>System Online</span>
+          <div className="status-badge online">
+            <div className="status-dot online" />
+            <span>System Online</span>
           </div>
         </div>
-      </header>
+      </motion.div>
 
       {/* Main Content Area */}
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden', gap: '0' }}>
         
         {/* Left Side: Live Analyzer */}
-        <div style={{ flex: 1, display: 'flex', position: 'relative' }}>
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          style={{ flex: 1, display: 'flex', position: 'relative' }}
+        >
           <LiveAnalyzer />
-        </div>
+        </motion.div>
 
         {/* Right Side: Queue Strip */}
-        <div style={{ 
-          width: '350px', 
-          background: 'var(--bg-card)', 
-          borderLeft: '1px solid var(--border-color)',
-          display: 'flex',
-          flexDirection: 'column',
-          boxShadow: '-4px 0 15px rgba(0,0,0,0.02)'
-        }}>
+        <motion.div 
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          style={{ 
+            width: '380px', 
+            background: 'var(--bg-card)', 
+            borderLeft: '1px solid var(--border-color)',
+            display: 'flex',
+            flexDirection: 'column',
+            boxShadow: '-4px 0 15px rgba(0,0,0,0.05)'
+          }}
+        >
           <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-color)' }}>
-            <h3 style={{ margin: 0, fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h3 style={{ margin: 0, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}>
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--accent-primary)' }} />
               Execution Queue
             </h3>
           </div>
           <div style={{ padding: '1.5rem', overflowY: 'auto', flex: 1 }}>
             <QueueList readonly={true} />
           </div>
-        </div>
+        </motion.div>
 
       </div>
     </div>
